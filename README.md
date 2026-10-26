@@ -33,3 +33,12 @@ This version analyzes JSON catalogs and configured character budgets. It does no
 ## Quality checks
 
 Missing and blank keys, placeholder parity (`{name}`), unexpected keys, per-key length budgets, expansion ratios, and locale text direction are checked on every scan.
+
+## Run localization checks in CI
+
+```bash
+npm test
+npm run locale:check -- --base locales/en-US.json --locale de-DE --file locales/de-DE.json
+```
+
+The command compares key coverage and `{placeholder}` parity and exits nonzero for missing, blank, unexpected, or mismatched strings. The included GitHub Actions workflow runs this check and the regression tests on pull requests and pushes to `master`. UI character budgets and RTL direction remain part of the dashboard scan; this CLI check does not render screenshots.

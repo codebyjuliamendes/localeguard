@@ -1,0 +1,5 @@
+{
+  "app_name": "Orbit",
+  "dashboard.welcome": "Willkommen zurück, {name}",
+  "trial.days_left": "Noch {count} Tage in der Testphase"
+}
