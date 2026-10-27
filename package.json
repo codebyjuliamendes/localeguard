@@ -1,1 +1,56 @@
-{"name":"localeguard","version":"1.0.0","private":true,"description":"Developer-first localization quality checks for product teams.","scripts":{"start":"node server.js","dev":"node --watch server.js","test":"node --test","locale:check":"node scripts/check-catalog.js"},"engines":{"node":">=20"},"dependencies":{"better-sqlite3":"^12.4.1","express":"^5.1.0"}}
+{
+  "name": "localeguard",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Developer-first localization quality checks for product teams.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "bin": {
+    "localeguard": "dist/cli/index.js"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "npm run build:server && npm run build:web",
+    "build:server": "tsc -p tsconfig.build.json",
+    "build:web": "tsx scripts/build-web.ts",
+    "dev": "tsx scripts/dev.ts",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p src/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run coverage && npm run build",
+    "locale:check": "tsx src/cli/index.ts"
+  },
+  "dependencies": {
+    "@fastify/helmet": "^13.2.0",
+    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/static": "^10.1.7",
+    "better-sqlite3": "^12.11.1",
+    "fastify": "^5.12.7",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.20.5",
+    "@vitest/coverage-v8": "^4.1.12",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^4.1.12"
+  }
+}
