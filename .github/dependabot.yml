@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      lint-and-types:
+        patterns: ['eslint*', '@eslint/*', 'typescript-eslint', 'typescript', '@types/*', 'prettier', 'globals']
+      test:
+        patterns: ['vitest', '@vitest/*', 'vite']
+      fastify:
+        patterns: ['fastify', '@fastify/*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly

@@ -1,0 +1,23 @@
+services:
+  localeguard:
+    build: .
+    image: localeguard:local
+    ports:
+      - '${PORT:-3007}:3007'
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-60}
+    volumes:
+      - localeguard-data:/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 15s
+
+volumes:
+  localeguard-data:
