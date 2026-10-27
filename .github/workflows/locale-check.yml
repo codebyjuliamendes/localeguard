@@ -22,7 +22,7 @@ jobs:
       - name: Export the JSON report
         if: always()
         run: npm run --silent locale:check -- --base locales/en-US.json --dir locales --format json --fail-on none > locale-report.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: locale-report
