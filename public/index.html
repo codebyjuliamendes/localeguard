@@ -1,1 +1,171 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LocaleGuard — Localization quality</title><link rel="stylesheet" href="/style.css"><link rel="icon" type="image/svg+xml" href="/mark-lg.svg"><link rel="apple-touch-icon" href="/mark-lg.svg"></head><body><aside class="rail"><div class="mark"><img class="brand-logo" src="/mark-lg.svg" alt="LocaleGuard"></div><span>◫</span><span>⌘</span><span>⚙</span><div class="avatar">JD</div></aside><main><header><div><small>WORKSPACE / LOCALIZATION</small><h1>LocaleGuard</h1><p>Catch translation issues before they reach production.</p></div><button class="primary" id="scan">↻ &nbsp;Run quality scan</button></header><section class="project"><div><span class="eyebrow">PROJECT</span><h2 id="project-name">Orbit Workspace</h2><p id="project-desc">Product UI · 3 locales · English source</p></div><div class="sync"><i></i> Catalogs synced <span>·</span> <span id="updated">Just now</span></div></section><div class="layout"><section class="panel locales"><div class="panel-head"><div><h3>Locales</h3><p>Translation health by language</p></div><button class="subtle">＋ Add locale</button></div><div id="locale-list"></div><div class="legend"><span><b class="dot green"></b> Healthy</span><span><b class="dot amber"></b> Needs attention</span><span><b class="dot red"></b> Blocking</span></div></section><section class="panel report"><div class="panel-head"><div><h3>Latest scan</h3><p id="scan-time">Analyzing your catalogs</p></div><span class="pill" id="scan-status">● ISSUES FOUND</span></div><div class="metrics"><div><strong id="blocking">0</strong><small>BLOCKING</small></div><div><strong id="warnings">0</strong><small>WARNINGS</small></div><div><strong id="coverage">0%</strong><small>KEY COVERAGE</small></div></div><div class="issue-head"><h4>Findings</h4><span id="finding-count">0 results</span></div><div id="issues"></div></section></div><section class="panel catalog"><div class="panel-head"><div><h3>Catalog editor</h3><p>Edit a locale file and scan it instantly</p></div><select id="locale-select"></select></div><div class="editor-wrap"><div class="editor-label"><span>● &nbsp;<b id="editor-locale">de-DE</b></span><span>JSON · UTF-8</span></div><textarea id="editor" spellcheck="false"></textarea></div><div class="editor-foot"><span id="edit-status">Changes are saved to the local demo database.</span><button id="save" class="primary">Save &amp; rescan</button></div></section><footer>LOCALEGUARD <span>·</span> A localization QA workspace <span>·</span> Demo data is stored locally</footer></main><script src="/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Localization QA: missing translations, placeholder parity, plural forms, UI length budgets and RTL checks."
+    />
+    <title>LocaleGuard — Localization quality</title>
+    <!-- Applies the stored theme before first paint (external file: CSP forbids inline scripts). -->
+    <script src="/theme.js"></script>
+    <link rel="stylesheet" href="/app.css" />
+    <link rel="icon" type="image/svg+xml" href="/mark-lg.svg" />
+    <link rel="apple-touch-icon" href="/mark-lg.svg" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="topbar" aria-label="Primary">
+      <a class="brand" href="/" aria-label="LocaleGuard home">
+        <img class="brand-logo" src="/mark-lg.svg" alt="" width="32" height="32" />
+        <span class="brand-name">LocaleGuard</span>
+      </a>
+      <div class="topbar-actions">
+        <button type="button" class="icon-button" id="theme-toggle" aria-pressed="false" aria-label="Dark theme">
+          <span aria-hidden="true" class="theme-icon"></span>
+        </button>
+        <span class="avatar" aria-hidden="true">JD</span>
+      </div>
+    </nav>
+
+    <main id="main" tabindex="-1">
+      <header class="page-head">
+        <div>
+          <small class="eyebrow">WORKSPACE / LOCALIZATION</small>
+          <h1>LocaleGuard</h1>
+          <p>Catch translation issues before they reach production.</p>
+        </div>
+        <button type="button" class="primary" id="scan" disabled>
+          <span aria-hidden="true">↻</span>
+          <span class="button-label" id="scan-label">Run quality scan</span>
+        </button>
+      </header>
+
+      <div class="banner" id="banner" role="alert" hidden>
+        <p id="banner-text"></p>
+        <button type="button" class="subtle" id="retry">Try again</button>
+      </div>
+
+      <section class="project card" aria-labelledby="project-name">
+        <div>
+          <span class="eyebrow">PROJECT</span>
+          <h2 id="project-name">Loading workspace…</h2>
+          <p id="project-desc">Fetching catalogs</p>
+        </div>
+        <div class="sync" id="sync" data-state="pending"><i aria-hidden="true"></i> <span id="updated">Connecting…</span></div>
+      </section>
+
+      <div class="layout">
+        <section class="panel locales card" aria-labelledby="locales-title">
+          <div class="panel-head">
+            <div>
+              <h3 id="locales-title">Locales</h3>
+              <p>Translation health by language</p>
+            </div>
+            <button type="button" class="subtle" id="add-locale" disabled><span aria-hidden="true">＋</span> Add locale</button>
+          </div>
+          <ul class="locale-list" id="locale-list" aria-busy="true">
+            <li class="placeholder-row">Loading locales…</li>
+          </ul>
+          <div class="legend" aria-hidden="true">
+            <span><b class="dot ok"></b> Healthy</span>
+            <span><b class="dot warn"></b> Needs attention</span>
+            <span><b class="dot bad"></b> Blocking</span>
+          </div>
+        </section>
+
+        <section class="panel report card" aria-labelledby="report-title">
+          <div class="panel-head">
+            <div>
+              <h3 id="report-title">Latest scan</h3>
+              <p id="scan-time">Analyzing your catalogs</p>
+            </div>
+            <span class="pill" id="scan-status" data-state="pending">● PENDING</span>
+          </div>
+          <dl class="metrics">
+            <div class="metric-blocking">
+              <dt>BLOCKING</dt>
+              <dd id="blocking">–</dd>
+            </div>
+            <div>
+              <dt>WARNINGS</dt>
+              <dd id="warnings">–</dd>
+            </div>
+            <div>
+              <dt>KEY COVERAGE</dt>
+              <dd id="coverage">–</dd>
+            </div>
+          </dl>
+          <div class="issue-head">
+            <h4>Findings</h4>
+            <span id="finding-count" aria-live="polite">Loading…</span>
+          </div>
+          <ul class="issues" id="issues" aria-busy="true">
+            <li class="placeholder-row">Loading findings…</li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="panel catalog card" aria-labelledby="catalog-title">
+        <div class="panel-head">
+          <div>
+            <h3 id="catalog-title">Catalog editor</h3>
+            <p>Edit a locale file and scan it instantly</p>
+          </div>
+          <label class="visually-hidden" for="locale-select">Locale to edit</label>
+          <select id="locale-select" disabled></select>
+        </div>
+        <div class="editor-wrap">
+          <div class="editor-label">
+            <span><span aria-hidden="true">●</span> <b id="editor-locale">—</b></span>
+            <span>JSON · UTF-8 · Ctrl/⌘+S saves</span>
+          </div>
+          <label class="visually-hidden" for="editor">Catalog JSON</label>
+          <textarea
+            id="editor"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            dir="ltr"
+            aria-describedby="edit-status"
+            disabled
+          ></textarea>
+        </div>
+        <div class="editor-foot">
+          <span id="edit-status" role="status">Changes are saved to the workspace database.</span>
+          <button type="button" id="save" class="primary" disabled>Save &amp; rescan</button>
+        </div>
+      </section>
+
+      <footer>
+        LOCALEGUARD <span aria-hidden="true">·</span> A localization QA workspace <span aria-hidden="true">·</span> Data is stored on this
+        server
+      </footer>
+    </main>
+
+    <dialog id="locale-dialog" aria-labelledby="locale-dialog-title">
+      <form id="locale-form" novalidate>
+        <h3 id="locale-dialog-title">Add locale</h3>
+        <p>Creates an empty catalog; every source key is reported as missing until it is translated.</p>
+        <label for="new-locale">Locale code</label>
+        <input
+          id="new-locale"
+          name="locale"
+          required
+          placeholder="pt-BR"
+          autocomplete="off"
+          spellcheck="false"
+          aria-describedby="new-locale-hint"
+        />
+        <small id="new-locale-hint" aria-live="polite">BCP 47 tag such as fr-FR, pt-BR, he-IL or zh-Hant-TW.</small>
+        <div class="dialog-actions">
+          <button type="button" class="subtle" id="locale-cancel">Cancel</button>
+          <button type="submit" class="primary" id="locale-submit">Add locale</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

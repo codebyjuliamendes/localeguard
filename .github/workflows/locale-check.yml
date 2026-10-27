@@ -3,6 +3,10 @@ on:
   pull_request:
   push:
     branches: [master]
+
+permissions:
+  contents: read
+
 jobs:
   catalogs:
     runs-on: ubuntu-latest
@@ -10,7 +14,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
+          cache: npm
       - run: npm ci
-      - run: npm test
-      - run: npm run locale:check -- --base locales/en-US.json --locale de-DE --file locales/de-DE.json
+      - name: Check every catalog in locales/ against en-US
+        run: npm run locale:check -- --base locales/en-US.json --dir locales --fail-on warning
+      - name: Export the JSON report
+        if: always()
+        run: npm run --silent locale:check -- --base locales/en-US.json --dir locales --format json --fail-on none > locale-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: locale-report
+          path: locale-report.json

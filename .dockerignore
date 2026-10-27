@@ -1,0 +1,16 @@
+.git
+.github
+node_modules
+dist
+coverage
+data
+*.sqlite
+*.sqlite-*
+*.log
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose.yml
+README.md
+test
